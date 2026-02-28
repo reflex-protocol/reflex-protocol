@@ -5,21 +5,15 @@ export const CHAIN_ID = 50312;
 
 // ── Addresses ────────────────────────────────────────────
 
-function requireEnv(key: string): `0x${string}` {
-  const val = process.env[key];
-  if (!val) throw new Error(`Missing environment variable: ${key}`);
-  return val as `0x${string}`;
-}
-
-export const VAULT_ADDRESS = requireEnv("NEXT_PUBLIC_VAULT_ADDRESS");
-export const INSURANCE_ADDRESS = requireEnv("NEXT_PUBLIC_INSURANCE_ADDRESS");
-
 export const CONTRACTS = {
   MockPriceOracle: "0x0A95c9540C8D5Cf0D573E7a8aDe32476e027dF28",
   REFLEXVault: "0x2CFf4FF05996365fCc1b9437948639Bbd3CCB5fa",
   REFLEXInsurance: "0xC3Ab24C3523126189d09f95dBf5e40e37497F90a",
   SomniaReactivityPrecompile: "0x0000000000000000000000000000000000000100",
 } as const;
+
+export const VAULT_ADDRESS: `0x${string}` = CONTRACTS.REFLEXVault;
+export const INSURANCE_ADDRESS: `0x${string}` = CONTRACTS.REFLEXInsurance;
 
 export const EXPLORER_BASE = "https://shannon-explorer.somnia.network";
 
