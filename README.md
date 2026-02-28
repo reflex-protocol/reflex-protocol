@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="packages/frontend/public/logo.svg" width="64" alt="REFLEX Protocol" />
+  <img src="frontend/public/logo.svg" width="64" alt="REFLEX Protocol" />
 </p>
 
 <h1 align="center">REFLEX Protocol</h1>
@@ -94,7 +94,7 @@ The frontend is a full featured Next.js 14 application with multiple pages:
 ## Quick Start
 
 ```bash
-git clone https://github.com/trinnode/reflex-protocol.git
+git clone https://github.com/reflex-protocol/reflex-protocol.git
 cd reflex-protocol
 pnpm install
 cp packages/contracts/.env.example packages/contracts/.env.local
