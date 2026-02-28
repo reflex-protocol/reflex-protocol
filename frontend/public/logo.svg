@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <rect width="48" height="48" fill="#0A0A0F" rx="0"/>
+  <!-- R: vertical stroke + diagonal leg -->
+  <path d="M10 10 L10 38" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="square" fill="none"/>
+  <path d="M10 10 L20 10 L20 22 L10 22" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="square" fill="none"/>
+  <path d="M10 22 L20 38" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="square" fill="none"/>
+  <!-- Brand separator -->
+  <line x1="22" y1="24" x2="26" y2="24" stroke="#A855F7" stroke-width="1.5" stroke-linecap="square"/>
+  <!-- X: two diagonal crossing lines -->
+  <path d="M28 10 L38 38" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="square" fill="none"/>
+  <path d="M38 10 L28 38" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="square" fill="none"/>
+</svg>
