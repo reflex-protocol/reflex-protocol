@@ -204,14 +204,15 @@ export default function HomePage() {
               </button>
             ) : (
               <ConnectButton.Custom>
-                {({ openConnectModal, mounted: rkMounted }) => {
-                  const ready = rkMounted;
+                {({ openConnectModal, mounted: rkMounted, authenticationStatus }) => {
+                  const ready = rkMounted && authenticationStatus !== "loading";
+                  const canOpen = ready && !!openConnectModal;
                   return (
                     <button
                       className={styles.btnLaunch}
-                      onClick={openConnectModal}
-                      disabled={!ready}
-                      style={{ opacity: ready ? 1 : 0.5 }}
+                      onClick={() => openConnectModal?.()}
+                      disabled={!canOpen}
+                      style={{ opacity: canOpen ? 1 : 0.5 }}
                     >
                       Connect Wallet
                     </button>
@@ -247,14 +248,15 @@ export default function HomePage() {
               </button>
             ) : (
               <ConnectButton.Custom>
-                {({ openConnectModal, mounted: rkMounted }) => {
-                  const ready = rkMounted;
+                {({ openConnectModal, mounted: rkMounted, authenticationStatus }) => {
+                  const ready = rkMounted && authenticationStatus !== "loading";
+                  const canOpen = ready && !!openConnectModal;
                   return (
                     <button
                       className={styles.btnPrimary}
-                      onClick={openConnectModal}
-                      disabled={!ready}
-                      style={{ opacity: ready ? 1 : 0.6 }}
+                      onClick={() => openConnectModal?.()}
+                      disabled={!canOpen}
+                      style={{ opacity: canOpen ? 1 : 0.6 }}
                     >
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 8 }}>
                         <rect x="2" y="6" width="20" height="12" rx="2" />
@@ -267,9 +269,9 @@ export default function HomePage() {
                 }}
               </ConnectButton.Custom>
             )}
-            <button className={styles.btnSecondary} onClick={() => router.push("/docs")}>
+            <a href="/docs" className={styles.btnSecondary}>
               Read the Docs
-            </button>
+            </a>
           </div>
           <div className={styles.heroStats}>
             <div className={styles.heroStat}>
@@ -491,14 +493,15 @@ export default function HomePage() {
               </button>
             ) : (
               <ConnectButton.Custom>
-                {({ openConnectModal, mounted: rkMounted }) => {
-                  const ready = rkMounted;
+                {({ openConnectModal, mounted: rkMounted, authenticationStatus }) => {
+                  const ready = rkMounted && authenticationStatus !== "loading";
+                  const canOpen = ready && !!openConnectModal;
                   return (
                     <button
                       className={styles.btnPrimary}
-                      onClick={openConnectModal}
-                      disabled={!ready}
-                      style={{ opacity: ready ? 1 : 0.6 }}
+                      onClick={() => openConnectModal?.()}
+                      disabled={!canOpen}
+                      style={{ opacity: canOpen ? 1 : 0.6 }}
                     >
                       Connect Wallet to Start
                     </button>
@@ -537,18 +540,18 @@ export default function HomePage() {
                 <a href="https://github.com/trinnode/reflex-protocol" target="_blank" rel="noopener noreferrer" className={styles.footerLink}>Source Code</a>
                 <a href="https://shannon-explorer.somnia.network" target="_blank" rel="noopener noreferrer" className={styles.footerLink}>Block Explorer</a>
               </div>
-              <div className={styles.footerCol}>
+              {/* <div className={styles.footerCol}>
                 <span className={styles.footerColTitle}>Built With</span>
                 <span className={styles.footerTech}>Solidity 0.8.24</span>
                 <span className={styles.footerTech}>Next.js 14</span>
                 <span className={styles.footerTech}>Somnia Shannon</span>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className={styles.footerDivider} />
           <div className={styles.footerBottom}>
             <p className={styles.footerCopy}>
-              Built by Isah Dauda for the Somnia Reactivity Hackathon on DoraHacks.
+              Somnia Reactivity.
             </p>
             <div className={styles.footerSocials}>
               <a href="https://github.com/trinnode" target="_blank" rel="noopener noreferrer" className={styles.footerSocial} title="GitHub">

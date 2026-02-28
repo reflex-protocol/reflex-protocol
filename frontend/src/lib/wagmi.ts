@@ -1,5 +1,6 @@
 import { defineChain } from "viem";
 import { createConfig, http } from "wagmi";
+import { injected } from "wagmi/connectors";
 
 export const somniaTestnet = defineChain({
   id: 50312,
@@ -25,6 +26,9 @@ export const somniaTestnet = defineChain({
 
 export const config = createConfig({
   chains: [somniaTestnet],
+  connectors: [
+    injected(),
+  ],
   transports: {
     [somniaTestnet.id]: http(),
   },
