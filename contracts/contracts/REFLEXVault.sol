@@ -25,7 +25,7 @@ contract REFLEXVault is SomniaEventHandler, ReentrancyGuard, Ownable, Pausable {
     // ─── Constants ───────────────────────────────────────────────────────────
 
     uint256 public constant MIN_COLLATERAL_RATIO = 120;
-    uint256 public constant MIN_SUB_FUNDING     = 32 ether;
+    uint256 public constant MIN_SUB_FUNDING     = 2 ether;
     uint256 public constant PROTOCOL_FEE_BPS    = 10; // 0.1% — 10 basis points
     uint256 public constant PRICE_PRECISION      = 1e18;
 
@@ -151,9 +151,9 @@ contract REFLEXVault is SomniaEventHandler, ReentrancyGuard, Ownable, Pausable {
         (, , , , uint256 balance) =
             ISomniaReactivity(PRECOMPILE_ADDRESS).getSubscription(pos.subscriptionId);
 
-        // 64 ether = 2 × MIN_SUB_FUNDING — warn early so the user has a full
+        // 4 ether = 2 × MIN_SUB_FUNDING — warn early so the user has a full
         // subscription cycle to react before the subscription goes inactive.
-        if (balance < 64 ether) {
+        if (balance < 4 ether) {
             emit SubscriptionLow(msg.sender, pos.subscriptionId, balance);
         }
     }

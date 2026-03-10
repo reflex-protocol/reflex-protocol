@@ -1,5 +1,5 @@
 import { defineChain } from "viem";
-import { createConfig, http } from "wagmi";
+import { cookieStorage, createConfig, createStorage, http } from "wagmi";
 import { injected } from "wagmi/connectors";
 
 export const somniaTestnet = defineChain({
@@ -33,4 +33,9 @@ export const config = createConfig({
     [somniaTestnet.id]: http(),
   },
   ssr: true,
+  // Persist wallet connection across page navigations using cookies
+  // so SSR can hydrate the correct connection state.
+  storage: createStorage({
+    storage: cookieStorage,
+  }),
 });

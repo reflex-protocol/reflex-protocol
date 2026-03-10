@@ -18,7 +18,7 @@ When you open a position on REFLEX, the protocol registers a reactive subscripti
     title: "Somnia Reactivity",
     content: `Somnia Reactivity is a new blockchain primitive that allows smart contracts to subscribe to on chain events and react to them automatically. Unlike traditional EVM blockchains where all execution must be triggered by an external transaction, Somnia lets contracts register subscriptions that fire callbacks when specific events occur.
 
-REFLEX uses this by subscribing to the PriceUpdated event emitted by the MockPriceOracle contract. Every time the oracle price changes, the REFLEXVault contract is notified through the reactive callback. It then checks every active position to see if the collateral ratio has fallen below the user's protection threshold. If it has, the vault triggers an emergency exit and returns collateral to the user's wallet.
+REFLEX uses this by subscribing to the PriceUpdated event emitted by the PriceOracle contract. Every time the oracle price changes, the REFLEXVault contract is notified through the reactive callback. It then checks every active position to see if the collateral ratio has fallen below the user's protection threshold. If it has, the vault triggers an emergency exit and returns collateral to the user's wallet.
 
 This approach eliminates the need for keeper networks, off chain monitoring scripts, and centralized infrastructure. Everything happens on chain with sub second latency.`,
   },
@@ -45,7 +45,7 @@ Coverage is active immediately after purchase and remains valid as long as your 
     title: "Technical Architecture",
     content: `The protocol consists of three smart contracts working together:
 
-MockPriceOracle: Simulates an on chain price feed. It emits PriceUpdated events whenever the price changes. In production, this would be replaced by a real oracle integration, but for the hackathon demo it lets us demonstrate the full reactive flow.
+PriceOracle: Production on chain price feed contract. It emits PriceUpdated events whenever the price changes and includes heartbeat, deviation, and updater controls for safer operation.
 
 REFLEXVault: The core vault contract. It holds user collateral, manages positions, and handles the reactive subscription logic. When it receives a reactive callback from the price oracle, it iterates through active positions and checks their health ratios against the current price. Positions below their protection threshold are automatically closed.
 

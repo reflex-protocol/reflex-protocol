@@ -10,7 +10,7 @@ import {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const MAINNET_PRECOMPILE = "0x0000000000000000000000000000000000000100";
-const MIN_SUB_FUNDING    = ethers.parseEther("32");
+const MIN_SUB_FUNDING    = ethers.parseEther("2");
 
 // Ratio = (collateral_net × price × 100) / (debt × PRICE_PRECISION)
 // PRICE_ONE = 1e18 represents a unit price (1.0) with 18-decimal precision.
@@ -365,23 +365,23 @@ describe("topUpCollateral", function () {
 // ─── describe: topUpSubscription ─────────────────────────────────────────────
 
 describe("topUpSubscription", function () {
-  it("emits SubscriptionLow when balance after top-up is below 64 ether", async () => {
+  it("emits SubscriptionLow when balance after top-up is below 4 ether", async () => {
     const { vault, alice, subscriptionId } =
       await loadFixture(openHealthyPositionFixture);
 
-    // Starting balance = MIN_SUB_FUNDING (32 ether); adding 10 → 42 ether < 64 ether
-    const topUp = ethers.parseEther("10");
+    // Starting balance = MIN_SUB_FUNDING (2 ether); adding 1 → 3 ether < 4 ether
+    const topUp = ethers.parseEther("1");
 
     await expect(vault.connect(alice).topUpSubscription({ value: topUp }))
       .to.emit(vault, "SubscriptionLow")
       .withArgs(alice.address, subscriptionId, MIN_SUB_FUNDING + topUp);
   });
 
-  it("does NOT emit SubscriptionLow when balance is at or above 64 ether", async () => {
+  it("does NOT emit SubscriptionLow when balance is at or above 4 ether", async () => {
     const { vault, alice } = await loadFixture(openHealthyPositionFixture);
 
-    // 32 (initial) + 40 = 72 ether ≥ 64 ether — no warning
-    const topUp = ethers.parseEther("40");
+    // 2 (initial) + 3 = 5 ether ≥ 4 ether — no warning
+    const topUp = ethers.parseEther("3");
 
     await expect(
       vault.connect(alice).topUpSubscription({ value: topUp })
