@@ -4,21 +4,25 @@
 export const CHAIN_ID = 50312;
 
 // ── Addresses ────────────────────────────────────────────
+// NOTE: When redeploying, update PriceOracle, REFLEXVault, and REFLEXInsurance
+//       addresses below to match the latest deployment.
 
 export const CONTRACTS = {
-  MockPriceOracle: "0x0A95c9540C8D5Cf0D573E7a8aDe32476e027dF28",
-  REFLEXVault: "0x2CFf4FF05996365fCc1b9437948639Bbd3CCB5fa",
-  REFLEXInsurance: "0xA733B9f5Ee432DFf4f8BBb18722359180359004E",
+  PriceOracle: "0xE85e5ac4F5Ac9987E28304d8f427f1ca6746a3E0",
+  REFLEXVault: "0x3d6e960110127699Db15052b434De05fd3A7D2A2",
+  REFLEXInsurance: "0xC36547153ef2482D33B786d3dD68a711324BD2bD",
   SomniaReactivityPrecompile: "0x0000000000000000000000000000000000000100",
 } as const;
 
 export const VAULT_ADDRESS: `0x${string}` = CONTRACTS.REFLEXVault;
 export const INSURANCE_ADDRESS: `0x${string}` = CONTRACTS.REFLEXInsurance;
+// Point this at whichever oracle is deployed.
+export const ORACLE_ADDRESS: `0x${string}` = CONTRACTS.PriceOracle;
 
 export const EXPLORER_BASE = "https://shannon-explorer.somnia.network";
 
 export const EXPLORER_LINKS = {
-  MockPriceOracle: `${EXPLORER_BASE}/address/${CONTRACTS.MockPriceOracle}#code`,
+  PriceOracle: `${EXPLORER_BASE}/address/${CONTRACTS.PriceOracle}#code`,
   REFLEXVault: `${EXPLORER_BASE}/address/${CONTRACTS.REFLEXVault}#code`,
   REFLEXInsurance: `${EXPLORER_BASE}/address/${CONTRACTS.REFLEXInsurance}#code`,
 } as const;
@@ -45,6 +49,13 @@ export const VAULT_ABI = [
       { name: "subscriptionId", type: "uint256" },
       { name: "protectionRatio", type: "uint256" },
     ],
+  },
+  {
+    type: "function",
+    name: "priceOracle",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ name: "", type: "address" }],
   },
   // write
   {
@@ -114,6 +125,51 @@ export const VAULT_ABI = [
   },
 ] as const;
 
+// ── Oracle ABI (shared by MockPriceOracle & PriceOracle) ─
+
+export const ORACLE_ABI = [
+  {
+    type: "function",
+    name: "getPrice",
+    stateMutability: "view",
+    inputs: [{ name: "asset", type: "address" }],
+    outputs: [
+      { name: "price", type: "uint256" },
+      { name: "lastUpdatedAt", type: "uint256" },
+    ],
+  },
+  {
+    type: "function",
+    name: "prices",
+    stateMutability: "view",
+    inputs: [{ name: "asset", type: "address" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function",
+    name: "updatedAt",
+    stateMutability: "view",
+    inputs: [{ name: "asset", type: "address" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function",
+    name: "PRICE_UPDATED_TOPIC",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ name: "", type: "bytes32" }],
+  },
+  {
+    type: "event",
+    name: "PriceUpdated",
+    inputs: [
+      { name: "asset", type: "address", indexed: true },
+      { name: "price", type: "uint256", indexed: false },
+      { name: "timestamp", type: "uint256", indexed: false },
+    ],
+  },
+] as const;
+
 // ── REFLEXInsurance ABI (frontend-used entries only) ─────
 
 export const INSURANCE_ABI = [
@@ -130,6 +186,13 @@ export const INSURANCE_ABI = [
     name: "coverageAmount",
     stateMutability: "view",
     inputs: [{ name: "user", type: "address" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function",
+    name: "poolBalance",
+    stateMutability: "view",
+    inputs: [],
     outputs: [{ name: "", type: "uint256" }],
   },
   // write

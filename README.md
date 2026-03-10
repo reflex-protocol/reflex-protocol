@@ -73,9 +73,9 @@ All contracts are deployed and verified on Somnia Shannon Testnet (Chain ID 5031
 
 | Contract | Address | Explorer |
 |----------|---------|----------|
-| MockPriceOracle | `0x0A95c9540C8D5Cf0D573E7a8aDe32476e027dF28` | [View](https://shannon-explorer.somnia.network/address/0x0A95c9540C8D5Cf0D573E7a8aDe32476e027dF28#code) |
-| REFLEXVault | `0x2CFf4FF05996365fCc1b9437948639Bbd3CCB5fa` | [View](https://shannon-explorer.somnia.network/address/0x2CFf4FF05996365fCc1b9437948639Bbd3CCB5fa#code) |
-| REFLEXInsurance | `0xA733B9f5Ee432DFf4f8BBb18722359180359004E` | [View](https://shannon-explorer.somnia.network/address/0xA733B9f5Ee432DFf4f8BBb18722359180359004E#code) |
+| PriceOracle | `0xE85e5ac4F5Ac9987E28304d8f427f1ca6746a3E0` | [View](https://shannon-explorer.somnia.network/address/0xE85e5ac4F5Ac9987E28304d8f427f1ca6746a3E0#code) |
+| REFLEXVault | `0x3d6e960110127699Db15052b434De05fd3A7D2A2` | [View](https://shannon-explorer.somnia.network/address/0x3d6e960110127699Db15052b434De05fd3A7D2A2#code) |
+| REFLEXInsurance | `0xC36547153ef2482D33B786d3dD68a711324BD2bD` | [View](https://shannon-explorer.somnia.network/address/0xC36547153ef2482D33B786d3dD68a711324BD2bD#code) |
 
 
 ## Frontend Application

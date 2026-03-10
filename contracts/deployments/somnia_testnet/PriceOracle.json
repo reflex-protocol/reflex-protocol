@@ -1,0 +1,725 @@
+{
+  "address": "0xE85e5ac4F5Ac9987E28304d8f427f1ca6746a3E0",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_heartbeat",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_maxDeviationBps",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_minUpdateInterval",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "oldPrice",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "newPrice",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxBps",
+          "type": "uint256"
+        }
+      ],
+      "name": "DeviationExceeded",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "PriceIsZero",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "age",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxAge",
+          "type": "uint256"
+        }
+      ],
+      "name": "PriceTooStale",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        }
+      ],
+      "name": "UnauthorizedUpdater",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "elapsed",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minInterval",
+          "type": "uint256"
+        }
+      ],
+      "name": "UpdateTooFrequent",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "oldHeartbeat",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newHeartbeat",
+          "type": "uint256"
+        }
+      ],
+      "name": "HeartbeatUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "oldBps",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newBps",
+          "type": "uint256"
+        }
+      ],
+      "name": "MaxDeviationUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "price",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "PriceUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "updater",
+          "type": "address"
+        }
+      ],
+      "name": "UpdaterAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "updater",
+          "type": "address"
+        }
+      ],
+      "name": "UpdaterRemoved",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "PRICE_UPDATED_TOPIC",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "updater",
+          "type": "address"
+        }
+      ],
+      "name": "addUpdater",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "authorizedUpdaters",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        }
+      ],
+      "name": "getPrice",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "price",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lastUpdatedAt",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "heartbeat",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "maxDeviationBps",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "minUpdateInterval",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "prices",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "updater",
+          "type": "address"
+        }
+      ],
+      "name": "removeUpdater",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_heartbeat",
+          "type": "uint256"
+        }
+      ],
+      "name": "setHeartbeat",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_maxDeviationBps",
+          "type": "uint256"
+        }
+      ],
+      "name": "setMaxDeviation",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_interval",
+          "type": "uint256"
+        }
+      ],
+      "name": "setMinUpdateInterval",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "newPrice",
+          "type": "uint256"
+        }
+      ],
+      "name": "updatePrice",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "updatedAt",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x10047fad865efdf4c814a7069bda8f834c2c1a2704c4c155f38195b936c796f3",
+  "receipt": {
+    "to": "0x0000000000000000000000000000000000000000",
+    "from": "0x199674cd60606A67E0Fa9fa28Ef00F58A33d2075",
+    "contractAddress": "0xE85e5ac4F5Ac9987E28304d8f427f1ca6746a3E0",
+    "transactionIndex": 0,
+    "gasUsed": "8358714",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000001000000000000000000000000000000000200000000000000000000001000000000000000000000000000000000000020000000000000000000800000000002000000000000000000000400000000000000000000000000000000000000000000000000008000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000020000001002000000000000000000000000000000000000000000000000002000000",
+    "blockHash": "0xca641e9e09275846401ec98da5692f28d485ceb7cf3569545bc4f0402e9cb4fe",
+    "transactionHash": "0x10047fad865efdf4c814a7069bda8f834c2c1a2704c4c155f38195b936c796f3",
+    "logs": [
+      {
+        "transactionIndex": 0,
+        "blockNumber": 326639965,
+        "transactionHash": "0x10047fad865efdf4c814a7069bda8f834c2c1a2704c4c155f38195b936c796f3",
+        "address": "0xE85e5ac4F5Ac9987E28304d8f427f1ca6746a3E0",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x000000000000000000000000199674cd60606a67e0fa9fa28ef00f58a33d2075"
+        ],
+        "data": "0x",
+        "logIndex": 0,
+        "blockHash": "0xca641e9e09275846401ec98da5692f28d485ceb7cf3569545bc4f0402e9cb4fe"
+      },
+      {
+        "transactionIndex": 0,
+        "blockNumber": 326639965,
+        "transactionHash": "0x10047fad865efdf4c814a7069bda8f834c2c1a2704c4c155f38195b936c796f3",
+        "address": "0xE85e5ac4F5Ac9987E28304d8f427f1ca6746a3E0",
+        "topics": [
+          "0x23a38f89c31ff6329bf86f3863cfa2ad8fc1462c40dbf907dbbebb8f9cb237ec",
+          "0x000000000000000000000000199674cd60606a67e0fa9fa28ef00f58a33d2075"
+        ],
+        "data": "0x",
+        "logIndex": 1,
+        "blockHash": "0xca641e9e09275846401ec98da5692f28d485ceb7cf3569545bc4f0402e9cb4fe"
+      }
+    ],
+    "blockNumber": 326639965,
+    "cumulativeGasUsed": "0",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "300",
+    "500",
+    "10"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "a16f794b63e33330cbe5e2e52184b17a",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_heartbeat\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_maxDeviationBps\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_minUpdateInterval\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"oldPrice\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"newPrice\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxBps\",\"type\":\"uint256\"}],\"name\":\"DeviationExceeded\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"PriceIsZero\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"age\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxAge\",\"type\":\"uint256\"}],\"name\":\"PriceTooStale\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\"}],\"name\":\"UnauthorizedUpdater\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"elapsed\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"minInterval\",\"type\":\"uint256\"}],\"name\":\"UpdateTooFrequent\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"oldHeartbeat\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newHeartbeat\",\"type\":\"uint256\"}],\"name\":\"HeartbeatUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"oldBps\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newBps\",\"type\":\"uint256\"}],\"name\":\"MaxDeviationUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"price\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"PriceUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"updater\",\"type\":\"address\"}],\"name\":\"UpdaterAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"updater\",\"type\":\"address\"}],\"name\":\"UpdaterRemoved\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"PRICE_UPDATED_TOPIC\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"updater\",\"type\":\"address\"}],\"name\":\"addUpdater\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"authorizedUpdaters\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"}],\"name\":\"getPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"price\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lastUpdatedAt\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"heartbeat\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"maxDeviationBps\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"minUpdateInterval\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"prices\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"updater\",\"type\":\"address\"}],\"name\":\"removeUpdater\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_heartbeat\",\"type\":\"uint256\"}],\"name\":\"setHeartbeat\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_maxDeviationBps\",\"type\":\"uint256\"}],\"name\":\"setMaxDeviation\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_interval\",\"type\":\"uint256\"}],\"name\":\"setMinUpdateInterval\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"newPrice\",\"type\":\"uint256\"}],\"name\":\"updatePrice\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"updatedAt\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"On chains with Chainlink/Pyth feeds available, prefer         ChainlinkPriceOracleAdapter instead.  This contract is intended for         chains (like Somnia testnet) where no third-party oracle exists yet         and a trusted operator pushes prices from an off-chain source.\",\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}]},\"events\":{\"PriceUpdated(address,uint256,uint256)\":{\"params\":{\"asset\":\"The asset whose price changed (address(0) for native STT).\",\"price\":\"The new price with 18-decimal precision (1e18 = 1.0).\",\"timestamp\":\"The block.timestamp of the update.\"}}},\"kind\":\"dev\",\"methods\":{\"constructor\":{\"params\":{\"_heartbeat\":\"Staleness window in seconds (e.g. 300 = 5 min).\",\"_maxDeviationBps\":\"Max price move per update in bps (e.g. 500 = 5%).\",\"_minUpdateInterval\":\"Minimum seconds between consecutive updates.\"}},\"getPrice(address)\":{\"params\":{\"asset\":\"The asset to query.\"},\"returns\":{\"lastUpdatedAt\":\"UNIX timestamp of the last update.\",\"price\":\"        The most recent price (18-decimal precision).\"}},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"},\"updatePrice(address,uint256)\":{\"details\":\"Checks deviation bounds, minimum interval, and non-zero price.         On the very first update for an asset, deviation and interval         checks are skipped (no prior reference price).\",\"params\":{\"asset\":\"The asset address (address(0) for native STT sentinel).\",\"newPrice\":\"Price with 18-decimal precision (1e18 = 1.0 unit).\"}}},\"title\":\"PriceOracle \\u2014 Production-ready oracle for REFLEX Protocol\",\"version\":1},\"userdoc\":{\"events\":{\"PriceUpdated(address,uint256,uint256)\":{\"notice\":\"Emitted every time a price is published.  The vault's Reactivity         subscription filters on this topic hash.\"}},\"kind\":\"user\",\"methods\":{\"PRICE_UPDATED_TOPIC()\":{\"notice\":\"The canonical topic hash for PriceUpdated.         Convenience function so callers don't have to recompute it.\"},\"addUpdater(address)\":{\"notice\":\"Whitelist a new address as an authorized price updater.\"},\"getPrice(address)\":{\"notice\":\"Returns the latest price and the timestamp it was recorded at.\"},\"heartbeat()\":{\"notice\":\"Maximum acceptable age (seconds). Default 5 minutes.\"},\"maxDeviationBps()\":{\"notice\":\"Maximum single-update price change in basis points.         5_00 = 5%.  Prevents manipulation via a single rogue update.\"},\"minUpdateInterval()\":{\"notice\":\"Minimum seconds between updates for the same asset.\"},\"removeUpdater(address)\":{\"notice\":\"Revoke an updater's authorization.\"},\"setHeartbeat(uint256)\":{\"notice\":\"Adjust the staleness window.\"},\"setMaxDeviation(uint256)\":{\"notice\":\"Adjust the maximum per-update deviation.\"},\"setMinUpdateInterval(uint256)\":{\"notice\":\"Adjust the minimum update interval.\"},\"updatePrice(address,uint256)\":{\"notice\":\"Push a new price for `asset`.\"}},\"notice\":\"Replaces MockPriceOracle with security hardening:   1. **Role-based updaters** \\u2014 only whitelisted addresses can push prices.   2. **Heartbeat / staleness** \\u2014 getPrice reverts if the last update      is older than `heartbeat` seconds.   3. **Deviation bounds** \\u2014 a single update cannot move the price by more      than `maxDeviationBps` basis points (prevents flash-manipulation).   4. **Minimum update interval** \\u2014 rate-limits updates to prevent spam.   Emits the same `PriceUpdated(address,uint256,uint256)` event that the   vault's Reactivity subscription already listens for \\u2014 zero changes needed   in the subscription setup.\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/PriceOracle.sol\":\"PriceOracle\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Context} from \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * The initial owner is set to the address provided by the deployer. This can\\n * later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    /**\\n     * @dev The caller account is not authorized to perform an operation.\\n     */\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    /**\\n     * @dev The owner is not a valid owner account. (eg. `address(0)`)\\n     */\\n    error OwnableInvalidOwner(address owner);\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.\\n     */\\n    constructor(address initialOwner) {\\n        if (initialOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(initialOwner);\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        if (owner() != _msgSender()) {\\n            revert OwnableUnauthorizedAccount(_msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby disabling any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        if (newOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\"},\"contracts/PriceOracle.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.24;\\n\\nimport {Ownable} from \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\nimport {IPriceOracle} from \\\"./interfaces/IPriceOracle.sol\\\";\\n\\n/// @title  PriceOracle \\u2014 Production-ready oracle for REFLEX Protocol\\n/// @notice Replaces MockPriceOracle with security hardening:\\n///\\n///   1. **Role-based updaters** \\u2014 only whitelisted addresses can push prices.\\n///   2. **Heartbeat / staleness** \\u2014 getPrice reverts if the last update\\n///      is older than `heartbeat` seconds.\\n///   3. **Deviation bounds** \\u2014 a single update cannot move the price by more\\n///      than `maxDeviationBps` basis points (prevents flash-manipulation).\\n///   4. **Minimum update interval** \\u2014 rate-limits updates to prevent spam.\\n///\\n///   Emits the same `PriceUpdated(address,uint256,uint256)` event that the\\n///   vault's Reactivity subscription already listens for \\u2014 zero changes needed\\n///   in the subscription setup.\\n///\\n/// @dev    On chains with Chainlink/Pyth feeds available, prefer\\n///         ChainlinkPriceOracleAdapter instead.  This contract is intended for\\n///         chains (like Somnia testnet) where no third-party oracle exists yet\\n///         and a trusted operator pushes prices from an off-chain source.\\ncontract PriceOracle is IPriceOracle, Ownable {\\n    // \\u2500\\u2500\\u2500 Errors \\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\n\\n    error UnauthorizedUpdater(address caller);\\n    error PriceIsZero();\\n    error PriceTooStale(uint256 age, uint256 maxAge);\\n    error DeviationExceeded(uint256 oldPrice, uint256 newPrice, uint256 maxBps);\\n    error UpdateTooFrequent(uint256 elapsed, uint256 minInterval);\\n\\n    // \\u2500\\u2500\\u2500 Events \\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\n\\n    event UpdaterAdded(address indexed updater);\\n    event UpdaterRemoved(address indexed updater);\\n    event HeartbeatUpdated(uint256 oldHeartbeat, uint256 newHeartbeat);\\n    event MaxDeviationUpdated(uint256 oldBps, uint256 newBps);\\n\\n    // \\u2500\\u2500\\u2500 Constants \\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\n\\n    bytes32 public constant override PRICE_UPDATED_TOPIC =\\n        keccak256(\\\"PriceUpdated(address,uint256,uint256)\\\");\\n\\n    // \\u2500\\u2500\\u2500 State \\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\n\\n    mapping(address => uint256) public prices;\\n    mapping(address => uint256) public updatedAt;\\n    mapping(address => bool)    public authorizedUpdaters;\\n\\n    /// @notice Maximum acceptable age (seconds). Default 5 minutes.\\n    uint256 public override heartbeat;\\n\\n    /// @notice Maximum single-update price change in basis points.\\n    ///         5_00 = 5%.  Prevents manipulation via a single rogue update.\\n    uint256 public maxDeviationBps;\\n\\n    /// @notice Minimum seconds between updates for the same asset.\\n    uint256 public minUpdateInterval;\\n\\n    // \\u2500\\u2500\\u2500 Constructor \\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\n\\n    /// @param _heartbeat         Staleness window in seconds (e.g. 300 = 5 min).\\n    /// @param _maxDeviationBps   Max price move per update in bps (e.g. 500 = 5%).\\n    /// @param _minUpdateInterval Minimum seconds between consecutive updates.\\n    constructor(\\n        uint256 _heartbeat,\\n        uint256 _maxDeviationBps,\\n        uint256 _minUpdateInterval\\n    ) Ownable(msg.sender) {\\n        heartbeat         = _heartbeat;\\n        maxDeviationBps   = _maxDeviationBps;\\n        minUpdateInterval = _minUpdateInterval;\\n\\n        // Deployer is the first authorized updater.\\n        authorizedUpdaters[msg.sender] = true;\\n        emit UpdaterAdded(msg.sender);\\n    }\\n\\n    // \\u2500\\u2500\\u2500 Modifiers \\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\n\\n    modifier onlyUpdater() {\\n        if (!authorizedUpdaters[msg.sender]) {\\n            revert UnauthorizedUpdater(msg.sender);\\n        }\\n        _;\\n    }\\n\\n    // \\u2500\\u2500\\u2500 External \\u2014 price updates \\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\n\\n    /// @notice Push a new price for `asset`.\\n    /// @dev    Checks deviation bounds, minimum interval, and non-zero price.\\n    ///         On the very first update for an asset, deviation and interval\\n    ///         checks are skipped (no prior reference price).\\n    /// @param  asset    The asset address (address(0) for native STT sentinel).\\n    /// @param  newPrice Price with 18-decimal precision (1e18 = 1.0 unit).\\n    function updatePrice(address asset, uint256 newPrice) external onlyUpdater {\\n        if (newPrice == 0) revert PriceIsZero();\\n\\n        uint256 oldPrice  = prices[asset];\\n        uint256 lastUpdate = updatedAt[asset];\\n\\n        // Skip deviation + interval checks on first-ever update.\\n        if (oldPrice > 0) {\\n            // \\u2500\\u2500 Rate-limit \\u2500\\u2500\\n            uint256 elapsed = block.timestamp - lastUpdate;\\n            if (elapsed < minUpdateInterval) {\\n                revert UpdateTooFrequent(elapsed, minUpdateInterval);\\n            }\\n\\n            // \\u2500\\u2500 Deviation check \\u2500\\u2500\\n            uint256 diff = newPrice > oldPrice\\n                ? newPrice - oldPrice\\n                : oldPrice - newPrice;\\n            uint256 deviationBps = (diff * 10_000) / oldPrice;\\n            if (deviationBps > maxDeviationBps) {\\n                revert DeviationExceeded(oldPrice, newPrice, maxDeviationBps);\\n            }\\n        }\\n\\n        prices[asset]    = newPrice;\\n        updatedAt[asset] = block.timestamp;\\n\\n        emit PriceUpdated(asset, newPrice, block.timestamp);\\n    }\\n\\n    // \\u2500\\u2500\\u2500 External \\u2014 views \\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\n\\n    /// @inheritdoc IPriceOracle\\n    function getPrice(address asset)\\n        external\\n        view\\n        override\\n        returns (uint256 price, uint256 lastUpdatedAt)\\n    {\\n        price         = prices[asset];\\n        lastUpdatedAt = updatedAt[asset];\\n\\n        // Revert if the price has never been set or is stale.\\n        if (lastUpdatedAt == 0) revert PriceTooStale(0, heartbeat);\\n        uint256 age = block.timestamp - lastUpdatedAt;\\n        if (age > heartbeat) revert PriceTooStale(age, heartbeat);\\n    }\\n\\n    // \\u2500\\u2500\\u2500 Owner \\u2014 administration \\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\n\\n    /// @notice Whitelist a new address as an authorized price updater.\\n    function addUpdater(address updater) external onlyOwner {\\n        authorizedUpdaters[updater] = true;\\n        emit UpdaterAdded(updater);\\n    }\\n\\n    /// @notice Revoke an updater's authorization.\\n    function removeUpdater(address updater) external onlyOwner {\\n        authorizedUpdaters[updater] = false;\\n        emit UpdaterRemoved(updater);\\n    }\\n\\n    /// @notice Adjust the staleness window.\\n    function setHeartbeat(uint256 _heartbeat) external onlyOwner {\\n        emit HeartbeatUpdated(heartbeat, _heartbeat);\\n        heartbeat = _heartbeat;\\n    }\\n\\n    /// @notice Adjust the maximum per-update deviation.\\n    function setMaxDeviation(uint256 _maxDeviationBps) external onlyOwner {\\n        emit MaxDeviationUpdated(maxDeviationBps, _maxDeviationBps);\\n        maxDeviationBps = _maxDeviationBps;\\n    }\\n\\n    /// @notice Adjust the minimum update interval.\\n    function setMinUpdateInterval(uint256 _interval) external onlyOwner {\\n        minUpdateInterval = _interval;\\n    }\\n}\\n\",\"keccak256\":\"0x6629f7e67949cc1b86630892bf3462b0247264ae32990b1bc25fac6adca06750\",\"license\":\"MIT\"},\"contracts/interfaces/IPriceOracle.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.24;\\n\\n/// @title  IPriceOracle \\u2014 Standard interface for REFLEX price oracles\\n/// @notice Any oracle (mock, production, Chainlink adapter, etc.) that feeds\\n///         the REFLEXVault must implement this interface.\\n///         The vault subscribes to the PriceUpdated event via Somnia Reactivity\\n///         and reads (price, timestamp) from the event data payload.\\ninterface IPriceOracle {\\n    // \\u2500\\u2500\\u2500 Events \\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\n\\n    /// @notice Emitted every time a price is published.  The vault's Reactivity\\n    ///         subscription filters on this topic hash.\\n    /// @param asset     The asset whose price changed (address(0) for native STT).\\n    /// @param price     The new price with 18-decimal precision (1e18 = 1.0).\\n    /// @param timestamp The block.timestamp of the update.\\n    event PriceUpdated(address indexed asset, uint256 price, uint256 timestamp);\\n\\n    // \\u2500\\u2500\\u2500 Views \\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\n\\n    /// @notice Returns the latest price and the timestamp it was recorded at.\\n    /// @param  asset The asset to query.\\n    /// @return price         The most recent price (18-decimal precision).\\n    /// @return lastUpdatedAt UNIX timestamp of the last update.\\n    function getPrice(address asset)\\n        external\\n        view\\n        returns (uint256 price, uint256 lastUpdatedAt);\\n\\n    /// @notice The canonical topic hash for PriceUpdated.\\n    ///         Convenience function so callers don't have to recompute it.\\n    function PRICE_UPDATED_TOPIC() external pure returns (bytes32);\\n\\n    /// @notice Maximum acceptable age (in seconds) of a price update before\\n    ///         it is considered stale.\\n    function heartbeat() external view returns (uint256);\\n}\\n\",\"keccak256\":\"0xd2ad9a320d6b5129ec0937746bd029100e244483cad367ebb4e98a297fa5d139\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5060405161095a38038061095a83398101604081905261002f91610106565b338061005557604051631e4fbdf760e01b81526000600482015260240160405180910390fd5b61005e816100b6565b5060048390556005829055600681905533600081815260036020526040808220805460ff19166001179055517f23a38f89c31ff6329bf86f3863cfa2ad8fc1462c40dbf907dbbebb8f9cb237ec9190a2505050610134565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b60008060006060848603121561011b57600080fd5b8351925060208401519150604084015190509250925092565b610817806101436000396000f3fe608060405234801561001057600080fd5b506004361061010b5760003560e01c80634e14a583116100a2578063cfed246b11610071578063cfed246b14610231578063d29dba9114610251578063dddbc04914610264578063e46f7d5114610277578063f2fde38b1461029757600080fd5b80634e14a583146101c8578063715018a6146101db5780638da5cb5b146101e35780638ff29cfe146101fe57600080fd5b80633ee7a701116100de5780633ee7a7011461017157806341976e091461017a57806343d24a5e146101a2578063457972de146101b557600080fd5b806304b07a5e146101105780630964ff261461012557806335304590146101415780633defb96214610168575b600080fd5b61012361011e366004610714565b6102aa565b005b61012e60065481565b6040519081526020015b60405180910390f35b61012e7fb556fac599c3c70efb9ab1fa725ecace6c81cc48d1455f886607def065f3e0c081565b61012e60045481565b61012e60055481565b61018d610188366004610714565b6102fb565b60408051928352602083019190915201610138565b6101236101b0366004610714565b610396565b6101236101c3366004610736565b6103ea565b6101236101d6366004610760565b61058a565b610123610597565b6000546040516001600160a01b039091168152602001610138565b61022161020c366004610714565b60036020526000908152604090205460ff1681565b6040519015158152602001610138565b61012e61023f366004610714565b60016020526000908152604090205481565b61012361025f366004610760565b6105ab565b610123610272366004610760565b6105f4565b61012e610285366004610714565b60026020526000908152604090205481565b6101236102a5366004610714565b61063d565b6102b261067b565b6001600160a01b038116600081815260036020526040808220805460ff19169055517f209d819a9ec655e89f2b2b9d65c8a78879b45a8f20d1941d69c5fe6dc21bcb629190a250565b6001600160a01b038116600090815260016020908152604080832054600290925282205490918190036103545760048054604051630fe84da760e01b815260009281019290925260248201526044015b60405180910390fd5b6000610360824261078f565b90506004548111156103905760048054604051630fe84da760e01b8152918201839052602482015260440161034b565b50915091565b61039e61067b565b6001600160a01b038116600081815260036020526040808220805460ff19166001179055517f23a38f89c31ff6329bf86f3863cfa2ad8fc1462c40dbf907dbbebb8f9cb237ec9190a250565b3360009081526003602052604090205460ff1661041f576040516001628cc74560e01b0319815233600482015260240161034b565b806000036104405760405163907adecd60e01b815260040160405180910390fd5b6001600160a01b0382166000908152600160209081526040808320546002909252909120548115610525576000610477824261078f565b90506006548110156104aa576006546040516372012c9960e11b815261034b918391600401918252602082015260400190565b60008385116104c2576104bd858561078f565b6104cc565b6104cc848661078f565b90506000846104dd836127106107a8565b6104e791906107bf565b905060055481111561052157600554604051637403977b60e01b81526004810187905260248101889052604481019190915260640161034b565b5050505b6001600160a01b0384166000818152600160209081526040808320879055600282529182902042908190558251878152918201527fb556fac599c3c70efb9ab1fa725ecace6c81cc48d1455f886607def065f3e0c0910160405180910390a250505050565b61059261067b565b600655565b61059f61067b565b6105a960006106a8565b565b6105b361067b565b60045460408051918252602082018390527fe452a27d3b098a57cdda646c96c15e5e8e1ba64ee911f09e4af4036611fe6792910160405180910390a1600455565b6105fc61067b565b60055460408051918252602082018390527fea7b0359048504e79474eaaa05294b49265fc4e7b0a0c3737aaa22412e90f16e910160405180910390a1600555565b61064561067b565b6001600160a01b03811661066f57604051631e4fbdf760e01b81526000600482015260240161034b565b610678816106a8565b50565b6000546001600160a01b031633146105a95760405163118cdaa760e01b815233600482015260240161034b565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b80356001600160a01b038116811461070f57600080fd5b919050565b60006020828403121561072657600080fd5b61072f826106f8565b9392505050565b6000806040838503121561074957600080fd5b610752836106f8565b946020939093013593505050565b60006020828403121561077257600080fd5b5035919050565b634e487b7160e01b600052601160045260246000fd5b818103818111156107a2576107a2610779565b92915050565b80820281158282048414176107a2576107a2610779565b6000826107dc57634e487b7160e01b600052601260045260246000fd5b50049056fea264697066735822122092f92e192aa49326268b2c7d038ee6687afb76a490923ff591292646d87df56f64736f6c63430008180033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061010b5760003560e01c80634e14a583116100a2578063cfed246b11610071578063cfed246b14610231578063d29dba9114610251578063dddbc04914610264578063e46f7d5114610277578063f2fde38b1461029757600080fd5b80634e14a583146101c8578063715018a6146101db5780638da5cb5b146101e35780638ff29cfe146101fe57600080fd5b80633ee7a701116100de5780633ee7a7011461017157806341976e091461017a57806343d24a5e146101a2578063457972de146101b557600080fd5b806304b07a5e146101105780630964ff261461012557806335304590146101415780633defb96214610168575b600080fd5b61012361011e366004610714565b6102aa565b005b61012e60065481565b6040519081526020015b60405180910390f35b61012e7fb556fac599c3c70efb9ab1fa725ecace6c81cc48d1455f886607def065f3e0c081565b61012e60045481565b61012e60055481565b61018d610188366004610714565b6102fb565b60408051928352602083019190915201610138565b6101236101b0366004610714565b610396565b6101236101c3366004610736565b6103ea565b6101236101d6366004610760565b61058a565b610123610597565b6000546040516001600160a01b039091168152602001610138565b61022161020c366004610714565b60036020526000908152604090205460ff1681565b6040519015158152602001610138565b61012e61023f366004610714565b60016020526000908152604090205481565b61012361025f366004610760565b6105ab565b610123610272366004610760565b6105f4565b61012e610285366004610714565b60026020526000908152604090205481565b6101236102a5366004610714565b61063d565b6102b261067b565b6001600160a01b038116600081815260036020526040808220805460ff19169055517f209d819a9ec655e89f2b2b9d65c8a78879b45a8f20d1941d69c5fe6dc21bcb629190a250565b6001600160a01b038116600090815260016020908152604080832054600290925282205490918190036103545760048054604051630fe84da760e01b815260009281019290925260248201526044015b60405180910390fd5b6000610360824261078f565b90506004548111156103905760048054604051630fe84da760e01b8152918201839052602482015260440161034b565b50915091565b61039e61067b565b6001600160a01b038116600081815260036020526040808220805460ff19166001179055517f23a38f89c31ff6329bf86f3863cfa2ad8fc1462c40dbf907dbbebb8f9cb237ec9190a250565b3360009081526003602052604090205460ff1661041f576040516001628cc74560e01b0319815233600482015260240161034b565b806000036104405760405163907adecd60e01b815260040160405180910390fd5b6001600160a01b0382166000908152600160209081526040808320546002909252909120548115610525576000610477824261078f565b90506006548110156104aa576006546040516372012c9960e11b815261034b918391600401918252602082015260400190565b60008385116104c2576104bd858561078f565b6104cc565b6104cc848661078f565b90506000846104dd836127106107a8565b6104e791906107bf565b905060055481111561052157600554604051637403977b60e01b81526004810187905260248101889052604481019190915260640161034b565b5050505b6001600160a01b0384166000818152600160209081526040808320879055600282529182902042908190558251878152918201527fb556fac599c3c70efb9ab1fa725ecace6c81cc48d1455f886607def065f3e0c0910160405180910390a250505050565b61059261067b565b600655565b61059f61067b565b6105a960006106a8565b565b6105b361067b565b60045460408051918252602082018390527fe452a27d3b098a57cdda646c96c15e5e8e1ba64ee911f09e4af4036611fe6792910160405180910390a1600455565b6105fc61067b565b60055460408051918252602082018390527fea7b0359048504e79474eaaa05294b49265fc4e7b0a0c3737aaa22412e90f16e910160405180910390a1600555565b61064561067b565b6001600160a01b03811661066f57604051631e4fbdf760e01b81526000600482015260240161034b565b610678816106a8565b50565b6000546001600160a01b031633146105a95760405163118cdaa760e01b815233600482015260240161034b565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b80356001600160a01b038116811461070f57600080fd5b919050565b60006020828403121561072657600080fd5b61072f826106f8565b9392505050565b6000806040838503121561074957600080fd5b610752836106f8565b946020939093013593505050565b60006020828403121561077257600080fd5b5035919050565b634e487b7160e01b600052601160045260246000fd5b818103818111156107a2576107a2610779565b92915050565b80820281158282048414176107a2576107a2610779565b6000826107dc57634e487b7160e01b600052601260045260246000fd5b50049056fea264697066735822122092f92e192aa49326268b2c7d038ee6687afb76a490923ff591292646d87df56f64736f6c63430008180033",
+  "devdoc": {
+    "details": "On chains with Chainlink/Pyth feeds available, prefer         ChainlinkPriceOracleAdapter instead.  This contract is intended for         chains (like Somnia testnet) where no third-party oracle exists yet         and a trusted operator pushes prices from an off-chain source.",
+    "errors": {
+      "OwnableInvalidOwner(address)": [
+        {
+          "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        }
+      ],
+      "OwnableUnauthorizedAccount(address)": [
+        {
+          "details": "The caller account is not authorized to perform an operation."
+        }
+      ]
+    },
+    "events": {
+      "PriceUpdated(address,uint256,uint256)": {
+        "params": {
+          "asset": "The asset whose price changed (address(0) for native STT).",
+          "price": "The new price with 18-decimal precision (1e18 = 1.0).",
+          "timestamp": "The block.timestamp of the update."
+        }
+      }
+    },
+    "kind": "dev",
+    "methods": {
+      "constructor": {
+        "params": {
+          "_heartbeat": "Staleness window in seconds (e.g. 300 = 5 min).",
+          "_maxDeviationBps": "Max price move per update in bps (e.g. 500 = 5%).",
+          "_minUpdateInterval": "Minimum seconds between consecutive updates."
+        }
+      },
+      "getPrice(address)": {
+        "params": {
+          "asset": "The asset to query."
+        },
+        "returns": {
+          "lastUpdatedAt": "UNIX timestamp of the last update.",
+          "price": "        The most recent price (18-decimal precision)."
+        }
+      },
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      },
+      "updatePrice(address,uint256)": {
+        "details": "Checks deviation bounds, minimum interval, and non-zero price.         On the very first update for an asset, deviation and interval         checks are skipped (no prior reference price).",
+        "params": {
+          "asset": "The asset address (address(0) for native STT sentinel).",
+          "newPrice": "Price with 18-decimal precision (1e18 = 1.0 unit)."
+        }
+      }
+    },
+    "title": "PriceOracle — Production-ready oracle for REFLEX Protocol",
+    "version": 1
+  },
+  "userdoc": {
+    "events": {
+      "PriceUpdated(address,uint256,uint256)": {
+        "notice": "Emitted every time a price is published.  The vault's Reactivity         subscription filters on this topic hash."
+      }
+    },
+    "kind": "user",
+    "methods": {
+      "PRICE_UPDATED_TOPIC()": {
+        "notice": "The canonical topic hash for PriceUpdated.         Convenience function so callers don't have to recompute it."
+      },
+      "addUpdater(address)": {
+        "notice": "Whitelist a new address as an authorized price updater."
+      },
+      "getPrice(address)": {
+        "notice": "Returns the latest price and the timestamp it was recorded at."
+      },
+      "heartbeat()": {
+        "notice": "Maximum acceptable age (seconds). Default 5 minutes."
+      },
+      "maxDeviationBps()": {
+        "notice": "Maximum single-update price change in basis points.         5_00 = 5%.  Prevents manipulation via a single rogue update."
+      },
+      "minUpdateInterval()": {
+        "notice": "Minimum seconds between updates for the same asset."
+      },
+      "removeUpdater(address)": {
+        "notice": "Revoke an updater's authorization."
+      },
+      "setHeartbeat(uint256)": {
+        "notice": "Adjust the staleness window."
+      },
+      "setMaxDeviation(uint256)": {
+        "notice": "Adjust the maximum per-update deviation."
+      },
+      "setMinUpdateInterval(uint256)": {
+        "notice": "Adjust the minimum update interval."
+      },
+      "updatePrice(address,uint256)": {
+        "notice": "Push a new price for `asset`."
+      }
+    },
+    "notice": "Replaces MockPriceOracle with security hardening:   1. **Role-based updaters** — only whitelisted addresses can push prices.   2. **Heartbeat / staleness** — getPrice reverts if the last update      is older than `heartbeat` seconds.   3. **Deviation bounds** — a single update cannot move the price by more      than `maxDeviationBps` basis points (prevents flash-manipulation).   4. **Minimum update interval** — rate-limits updates to prevent spam.   Emits the same `PriceUpdated(address,uint256,uint256)` event that the   vault's Reactivity subscription already listens for — zero changes needed   in the subscription setup.",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 8,
+        "contract": "contracts/PriceOracle.sol:PriceOracle",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 718,
+        "contract": "contracts/PriceOracle.sol:PriceOracle",
+        "label": "prices",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_address,t_uint256)"
+      },
+      {
+        "astId": 722,
+        "contract": "contracts/PriceOracle.sol:PriceOracle",
+        "label": "updatedAt",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_address,t_uint256)"
+      },
+      {
+        "astId": 726,
+        "contract": "contracts/PriceOracle.sol:PriceOracle",
+        "label": "authorizedUpdaters",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 730,
+        "contract": "contracts/PriceOracle.sol:PriceOracle",
+        "label": "heartbeat",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 733,
+        "contract": "contracts/PriceOracle.sol:PriceOracle",
+        "label": "maxDeviationBps",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 736,
+        "contract": "contracts/PriceOracle.sol:PriceOracle",
+        "label": "minUpdateInterval",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_uint256"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_address,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

@@ -21,7 +21,7 @@ const PRESETS = [
   { label: "Aggressive", value: 125, color: "#F97316", icon: "⚡" },
 ] as const;
 
-const MIN_COLLATERAL = 32;
+const MIN_COLLATERAL = 2;
 const MIN_OPEN_RATIO = 140;
 
 // ── Component ────────────────────────────────────────────
@@ -157,7 +157,7 @@ export default function OpenPositionModal({
               />
             </div>
             <span className={styles.hint}>
-              Min {MIN_COLLATERAL} STT (includes 32 STT for reactive subscription)
+              Min {MIN_COLLATERAL} STT (includes 2 STT for reactive subscription)
             </span>
             {collateralError && (
               <span className={styles.errorMsg}>{collateralError}</span>

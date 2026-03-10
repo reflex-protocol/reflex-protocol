@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
+import { cookieToInitialState } from "wagmi";
 import Web3Provider from "@/providers/Web3Provider";
+import { config } from "@/lib/wagmi";
 import "../styles/globals.css";
 
 export const metadata: Metadata = {
@@ -12,9 +15,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // Read wagmi connection state from cookies so it survives page navigation.
+  const headersList = await headers();
+  const cookie = headersList.get("cookie") ?? "";
+  const initialState = cookieToInitialState(config, cookie);
+
   return (
     <html lang="en">
       <head>
@@ -38,7 +46,7 @@ export default function RootLayout({
         </div>
         <div className="gridOverlay" aria-hidden="true" />
 
-        <Web3Provider>{children}</Web3Provider>
+        <Web3Provider initialState={initialState}>{children}</Web3Provider>
       </body>
     </html>
   );

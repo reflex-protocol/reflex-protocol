@@ -6,22 +6,39 @@ import { ethers } from "hardhat";
 const SOMNIA_PRECOMPILE = "0x0000000000000000000000000000000000000100";
 
 // Deterministic topic hash — keccak256("PriceUpdated(address,uint256,uint256)").
-// Same value the MockPriceOracle exposes as PRICE_UPDATED_TOPIC.
+// Same value every IPriceOracle implementation exposes as PRICE_UPDATED_TOPIC.
 const PRICE_UPDATE_TOPIC = ethers.id("PriceUpdated(address,uint256,uint256)");
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts, network } = hre;
-  const { deploy, get } = deployments;
+  const { deploy, getOrNull } = deployments;
   const { deployer } = await getNamedAccounts();
 
   let oracleAddress: string;
 
-  // Prefer the env var if set; otherwise use the deployed MockPriceOracle artifact.
+  // Priority order for oracle address resolution:
+  // 1. Explicit env var (highest priority)
+  // 2. PriceOracle deployment (production)
+  // 3. ChainlinkPriceOracleAdapter deployment
+  // 4. MockPriceOracle deployment (fallback for local/test)
   if (process.env.PRICE_ORACLE_ADDRESS) {
     oracleAddress = process.env.PRICE_ORACLE_ADDRESS;
   } else {
-    const mockOracle = await get("MockPriceOracle");
-    oracleAddress = mockOracle.address;
+    const prodOracle = await getOrNull("PriceOracle");
+    const chainlinkAdapter = await getOrNull("ChainlinkPriceOracleAdapter");
+    const mockOracle = await getOrNull("MockPriceOracle");
+
+    if (prodOracle) {
+      oracleAddress = prodOracle.address;
+    } else if (chainlinkAdapter) {
+      oracleAddress = chainlinkAdapter.address;
+    } else if (mockOracle) {
+      oracleAddress = mockOracle.address;
+    } else {
+      throw new Error(
+        "No oracle deployment found. Deploy an oracle first or set PRICE_ORACLE_ADDRESS."
+      );
+    }
   }
 
   const priceUpdateTopic = PRICE_UPDATE_TOPIC;
@@ -41,4 +58,4 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 export default func;
 func.tags = ["vault", "core"];
-func.dependencies = ["oracle"]; // ensures mock oracle is deployed first on local nets
+func.dependencies = ["oracle"]; // ensures oracle is deployed first

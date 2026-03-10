@@ -27,6 +27,7 @@ import type { ReactivityEvent as FeedEvent } from "@/components/feed";
 
 import { useReactivitySubscription } from "@/hooks/useReactivitySubscription";
 import { usePosition } from "@/hooks/usePosition";
+import { useOraclePrice } from "@/hooks/useOraclePrice";
 import {
   VAULT_ADDRESS,
   INSURANCE_ADDRESS,
@@ -93,6 +94,9 @@ export default function DashboardPage() {
 
   const coverage = coverageRaw ? formatEther(coverageRaw as bigint) : "0";
 
+  // ── Oracle price (on-chain) ───────────────────────────
+  const oraclePrice = useOraclePrice();
+
   // ── Insurance write ───────────────────────────────────
   const { writeContract: writeInsurance } = useWriteContract();
 
@@ -114,42 +118,56 @@ export default function DashboardPage() {
     }
   }, [txError, showToast]);
 
-  // ── Derive price entries from reactivity events ───────
+  // ── Derive price entries from oracle + reactivity events ─
   const [prevPrices, setPrevPrices] = useState<Map<string, bigint>>(new Map());
 
   const priceEntries: PriceEntry[] = useMemo(() => {
-    const priceEvents = events.filter(
-      (e) =>
-        e.topics[0]?.toLowerCase() === PRICE_UPDATED_TOPIC.toLowerCase()
-    );
-
-    const latestMap = new Map<string, { price: bigint; ts: number }>();
-    for (const evt of priceEvents) {
-      const emitter = evt.emitter;
-      if (!latestMap.has(emitter)) {
-        try {
-          const priceHex =
-            evt.data.length >= 66 ? evt.data.slice(0, 66) : evt.data;
-          const price = BigInt(priceHex);
-          latestMap.set(emitter, { price, ts: evt.timestamp });
-        } catch {
-          // skip unparseable
-        }
-      }
-    }
-
+    // Always include the on-chain oracle price as the primary source.
     const entries: PriceEntry[] = [];
-    latestMap.forEach(({ price, ts }, emitter) => {
-      const prev = prevPrices.get(emitter);
+
+    if (oraclePrice.priceRaw > 0n) {
+      const prev = prevPrices.get("STT/USD");
       entries.push({
         asset: "STT/USD",
-        price,
-        updatedAt: ts,
-        changed: deriveChange(prev, price),
+        price: oraclePrice.priceRaw,
+        updatedAt: oraclePrice.lastUpdatedAt,
+        changed: deriveChange(prev, oraclePrice.priceRaw),
       });
-    });
+    } else {
+      // Fallback: derive from reactivity WebSocket events if oracle read fails.
+      const priceEvents = events.filter(
+        (e) =>
+          e.topics[0]?.toLowerCase() === PRICE_UPDATED_TOPIC.toLowerCase()
+      );
+
+      const latestMap = new Map<string, { price: bigint; ts: number }>();
+      for (const evt of priceEvents) {
+        const emitter = evt.emitter;
+        if (!latestMap.has(emitter)) {
+          try {
+            const priceHex =
+              evt.data.length >= 66 ? evt.data.slice(0, 66) : evt.data;
+            const price = BigInt(priceHex);
+            latestMap.set(emitter, { price, ts: evt.timestamp });
+          } catch {
+            // skip unparseable
+          }
+        }
+      }
+
+      latestMap.forEach(({ price, ts }, emitter) => {
+        const prev = prevPrices.get(emitter);
+        entries.push({
+          asset: "STT/USD",
+          price,
+          updatedAt: ts,
+          changed: deriveChange(prev, price),
+        });
+      });
+    }
+
     return entries;
-  }, [events, prevPrices]);
+  }, [events, prevPrices, oraclePrice.priceRaw, oraclePrice.lastUpdatedAt]);
 
   useEffect(() => {
     if (priceEntries.length > 0) {
@@ -438,11 +456,16 @@ export default function DashboardPage() {
                       </svg>
                     </span>
                     Price Feed
+                    {oraclePrice.isStale && !oraclePrice.isLoading && (
+                      <span style={{ color: "var(--color-warn)", fontSize: "0.75rem", marginLeft: 8 }}>
+                        STALE
+                      </span>
+                    )}
                   </span>
                   {wsConnected && (
                     <span className={styles.liveIndicator}>
                       <span className={styles.liveDot} />
-                      Live
+                      {oraclePrice.priceRaw > 0n ? "On-chain" : "Live"}
                     </span>
                   )}
                 </div>
