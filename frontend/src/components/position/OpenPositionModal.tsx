@@ -25,6 +25,9 @@ const MIN_SUB_FUNDING = 2;
 const MIN_TOTAL_COLLATERAL = 2.01;
 const MIN_OPEN_RATIO = 140;
 const RECOMMENDED_GAS_BUFFER = 0.05;
+const QUICK_FILL_COLLATERAL = "2.85";
+const QUICK_FILL_DEBT = "0.55";
+const QUICK_FILL_RATIO = 150;
 
 // ── Component ────────────────────────────────────────────
 
@@ -149,6 +152,23 @@ export default function OpenPositionModal({
               Collateral Amount
               <span className={styles.labelUnit}>STT</span>
             </label>
+            <div className={styles.quickFillRow}>
+              <button
+                type="button"
+                className={styles.quickFillBtn}
+                onClick={() => {
+                  setCollateral(QUICK_FILL_COLLATERAL);
+                  setDebt(QUICK_FILL_DEBT);
+                  setProtectionRatio(QUICK_FILL_RATIO);
+                }}
+                disabled={isLoading}
+              >
+                Quick Fill (3 STT wallet)
+              </button>
+              <span className={styles.quickFillMeta}>
+                {QUICK_FILL_COLLATERAL} collateral / {QUICK_FILL_DEBT} debt / {QUICK_FILL_RATIO}%
+              </span>
+            </div>
             <div className={styles.inputWrap}>
               <input
                 className={styles.input}
@@ -263,6 +283,9 @@ export default function OpenPositionModal({
           </div>
 
           {/* Submit */}
+          <div className={styles.minimumSummary}>
+            Minimum you can use now: {MIN_TOTAL_COLLATERAL} STT total ({(MIN_TOTAL_COLLATERAL - MIN_SUB_FUNDING).toFixed(2)} STT usable after subscription)
+          </div>
           <button
             type="submit"
             className={styles.submitBtn}
